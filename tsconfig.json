@@ -4,4 +4,7 @@
     "outDir": "./dist"
   },
   "include": ["./src"],
+  "lib": ["ESNext"],
+  "module": "ESNext",
+  "target": "ESNext"
 }

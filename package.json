@@ -1,15 +1,24 @@
 {
   "name": "react-api-documenter",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "React API documentation generator",
-  "main": "dist/index.js",
-  "files": ["dist"],
+  "bin": {
+    "react-api-documenter": "./dist/bin.js"
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc --build"
   },
   "author": "Nouzbe",
   "license": "MIT",
+  "dependencies": {
+    "yargs": "^16.0.3"
+  },
   "devDependencies": {
+    "@types/node": "^14.11.8",
+    "@types/yargs": "^15.0.8",
     "typescript": "^4.0.3"
   }
 }

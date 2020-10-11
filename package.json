@@ -3,9 +3,13 @@
   "version": "1.0.0",
   "description": "React API documentation generator",
   "main": "dist/index.js",
+  "files": ["dist"],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc --build"
   },
   "author": "Nouzbe",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^4.0.3"
+  }
 }

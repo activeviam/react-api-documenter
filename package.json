@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "React API documentation generator",
   "bin": {
-    "react-api-documenter": "./dist/bin.js"
+    "react-api-documenter": "./bin.js"
   },
   "files": [
     "dist"

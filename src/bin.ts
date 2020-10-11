@@ -12,9 +12,11 @@ command(
     const args = getArgs(options._[0]);
 
     const inputFolder = getArg(args, "--input-folder");
-    const outputFolder = getArg(args, "-output-folder");
+    const outputFolder = getArg(args, "--output-folder");
+    const ignoreString = getArg(args, "--ignore-pattern");
+    const ignorePattern = ignoreString ? new RegExp(ignoreString) : undefined;
 
-    await generateMarkdown(inputFolder, outputFolder);
+    await generateMarkdown(inputFolder, outputFolder, ignorePattern);
   }
 )
   .demandCommand(1, "")

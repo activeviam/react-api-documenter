@@ -6,7 +6,8 @@
     "react-api-documenter": "./bin.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "bin.js"
   ],
   "scripts": {
     "build": "tsc --build"

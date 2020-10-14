@@ -1,0 +1,2 @@
+export const docCommentForTests =
+  "/**\n * Returns a new {@link MdxSelect} corresponding to `mdx` where the given level was added.\n *\n * @param mdx - the mdx on which the level should be added.\n *\n * @param dimensionName - the name of the dimension containing the added level.\n *\n * @param hierarchyName - the name of the hierarchy containing the added level.\n *\n * @param levelName - the name of the added level.\n */\n";

@@ -1,7 +1,9 @@
 import * as path from "path";
-import { readFile, readdir, writeJSON } from "fs-extra";
-import { getApiItems } from "./getApiItems";
-import { access } from "fs";
+import { ApiPackage } from "@microsoft/api-extractor-model";
+import { readdir, writeFile } from "fs-extra";
+
+import { ApiItems, getApiItems } from "./api/getApiItems";
+import { getMarkdownPage } from "./output/getMarkdownPage";
 
 /**
  * Reads the .api.json file under `inputFolder` and creates the documentation markdown files under `outputFolder`.
@@ -22,22 +24,24 @@ export const generateMarkdown = async (
     );
   }
 
-  const apiBuffer = await readFile(path.resolve(inputFolder, apiFileName));
-  const apiString = apiBuffer.toString();
-  const api = JSON.parse(apiString);
-
-  const items = getApiItems(api, ignorePattern);
-
-  const itemNames = Object.keys(items).reduce(
-    (acc, key) => ({
-      ...acc,
-      [key]:
-        key === "props"
-          ? Object.keys(items[key])
-          : items[key].map(({ name }) => name),
-    }),
-    {}
+  const apiPackage = ApiPackage.loadFromJsonFile(
+    path.resolve(inputFolder, apiFileName)
   );
 
-  await writeJSON(path.resolve(outputFolder, apiFileName), itemNames);
+  const items = getApiItems(apiPackage, ignorePattern);
+
+  await Promise.all(
+    Object.keys(items).map((key: keyof ApiItems) => {
+      if (key === "props") {
+        // We don't generate a dedicated page for props: they are inlined with their corresponding Components.
+        return Promise.resolve();
+      }
+      const markdownPage = getMarkdownPage(
+        items,
+        key,
+        apiPackage.canonicalReference.toString()
+      );
+      return writeFile(path.resolve(outputFolder, `${key}.md`), markdownPage);
+    })
+  );
 };

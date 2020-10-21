@@ -1,6 +1,6 @@
 import * as path from "path";
 import { ApiPackage } from "@microsoft/api-extractor-model";
-import { readdir, writeFile } from "fs-extra";
+import { readdir, writeFile, stat, mkdirSync } from "fs-extra";
 
 import { ApiItems, getApiItems } from "./api/getApiItems";
 import { getMarkdownPage } from "./output/getMarkdownPage";
@@ -29,6 +29,12 @@ export const generateMarkdown = async (
   );
 
   const items = getApiItems(apiPackage, ignorePattern);
+
+  await stat(outputFolder, (err) => {
+    if (err.code === "ENOENT") {
+      mkdirSync(outputFolder);
+    }
+  });
 
   await Promise.all(
     Object.keys(items).map((key: keyof ApiItems) => {

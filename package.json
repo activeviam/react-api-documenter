@@ -18,7 +18,7 @@
   "license": "MIT",
   "dependencies": {
     "@microsoft/api-documenter": "7.9.31",
-    "@microsoft/api-extractor-model": "7.9.31",
+    "@microsoft/api-extractor-model": "7.10.10",
     "@microsoft/tsdoc": "0.12.19",
     "fs-extra": "^9.0.1",
     "yargs": "^16.0.3"

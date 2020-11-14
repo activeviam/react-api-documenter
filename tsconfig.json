@@ -2,10 +2,10 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "skipLibCheck": true
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "module": "CommonJS",
+    "target": "ES6"
   },
   "include": ["./src"],
-  "lib": ["ESNext"],
-  "module": "ESNext",
-  "target": "ESNext"
 }

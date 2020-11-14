@@ -1,27 +1,30 @@
-import { ApiItems } from "../api/getApiItems";
 import { getDescription } from "./getDescription";
-import { getDocComment } from "./getDocComment";
+import { MarkdownGetterArguments } from "./output.types";
 
 /**
  * Returns the markdown string for an error
  */
-export const getMarkdownForError = (
-  items: ApiItems,
-  errorName: string
-): string => {
-  let markdown = `## ${errorName}\n\n`;
-  const error = items.errors[errorName];
+export const getMarkdownForError = ({
+  configuration,
+  items,
+  markdownEmitter,
+  name,
+}: MarkdownGetterArguments): string => {
+  let markdown = `## ${name}\n\n`;
+  const error = items.errors[name];
 
-  markdown += getDescription(getDocComment(error));
+  markdown += getDescription({
+    configuration,
+    item: error,
+    markdownEmitter,
+  });
 
-  markdown += `
-
-\`\`\`typescript
+  markdown += `\`\`\`typescript
 try {
   
 } catch(error: Error) {
-  if(error instanceof ${errorName}) {
-    // handle ${errorName}
+  if(error instanceof ${name}) {
+    // handle ${name}
   }
 }
 \`\`\``;

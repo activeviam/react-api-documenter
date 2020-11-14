@@ -1,27 +1,30 @@
-import { ApiItems } from "../api/getApiItems";
 import { getDescription } from "./getDescription";
-import { getDocComment } from "./getDocComment";
+import { MarkdownGetterArguments } from "./output.types";
 
 /**
  * Returns the markdown string for a Context Provider
  */
-export const getMarkdownForContextProvider = (
-  items: ApiItems,
-  contextProviderName: string
-): string => {
-  let markdown = `## ${contextProviderName}\n\n`;
-  const contextProvider = items.contextProviders[contextProviderName];
+export const getMarkdownForContextProvider = ({
+  configuration,
+  items,
+  markdownEmitter,
+  name,
+}: MarkdownGetterArguments): string => {
+  let markdown = `## ${name}\n\n`;
+  const contextProvider = items.contextProviders[name];
 
-  markdown += getDescription(getDocComment(contextProvider));
+  markdown += getDescription({
+    configuration,
+    item: contextProvider,
+    markdownEmitter,
+  });
 
-  markdown += `
-
-\`\`\`jsx
-<${contextProviderName} value={${contextProviderName[0].toLowerCase()}${contextProviderName
+  markdown += `\`\`\`jsx
+<${name} value={${name[0].toLowerCase()}${name
     .slice(1)
     .replace(/Provider$/, "")}}>
   {children}
-</${contextProviderName}>
+</${name}>
 \`\`\``;
 
   return markdown;

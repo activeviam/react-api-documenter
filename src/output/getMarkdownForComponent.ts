@@ -1,27 +1,30 @@
 import { ApiPropertySignature } from "@microsoft/api-extractor-model";
-import { ApiItems } from "../api/getApiItems";
 import { getDescription } from "./getDescription";
-import { getDocComment } from "./getDocComment";
 import { getPropsTable } from "./getPropsTable";
+import { MarkdownGetterArguments } from "./output.types";
 
 /**
  * Returns the markdown string for a Component
  */
-export const getMarkdownForComponent = (
-  items: ApiItems,
-  componentName: string,
-  packageCanonicalReference: string
-): string => {
-  let markdown = `## ${componentName}\n\n`;
-  const component = items.components[componentName];
-  const props = items.props[componentName];
+export const getMarkdownForComponent = ({
+  configuration,
+  items,
+  markdownEmitter,
+  name,
+  packageCanonicalReference,
+}: MarkdownGetterArguments): string => {
+  let markdown = `## ${name}\n\n`;
+  const component = items.components[name];
+  const props = items.props[name];
 
-  markdown += getDescription(getDocComment(component));
+  markdown += getDescription({
+    configuration,
+    item: component,
+    markdownEmitter,
+  });
 
-  markdown += `
-
-\`\`\`jsx
-<${componentName}
+  markdown += `\`\`\`jsx
+<${name}
 ${
   props
     ? props.members
@@ -32,8 +35,12 @@ ${
 />
 \`\`\`
 
-${getPropsTable(props, packageCanonicalReference)}
-`;
+${getPropsTable({
+  configuration,
+  item: props,
+  markdownEmitter,
+  packageCanonicalReference,
+})}`;
 
   return markdown;
 };

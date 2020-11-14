@@ -1,43 +1,60 @@
-import { ApiItems } from "../api/getApiItems";
 import { isConstructor } from "../api/isConstructor";
 import { isMethod } from "../api/isMethod";
+import { getArgumentsTable } from "./getArgumentsTable";
 import { getDescription } from "./getDescription";
-import { getDocComment } from "./getDocComment";
-import {
-  _getArgumentsTable,
-  _getFunctionDescription,
-  _getFunctionExcerpt,
-} from "./getMarkdownForFunction";
+import { _getFunctionExcerpt } from "./getMarkdownForFunction";
+import { MarkdownGetterArguments } from "./output.types";
 
 /**
  * Returns the markdown string for a Class
  */
-export const getMarkdownForClass = (
-  items: ApiItems,
-  className: string,
-  packageCanonicalReference: string
-): string => {
-  let markdown = `## ${className}\n\n`;
-  const item = items.classes[className];
+export const getMarkdownForClass = ({
+  configuration,
+  items,
+  markdownEmitter,
+  name,
+  packageCanonicalReference,
+}: MarkdownGetterArguments): string => {
+  let markdown = `## ${name}\n\n`;
+  const item = items.classes[name];
 
-  markdown += getDescription(getDocComment(item));
-  markdown += "\n\n";
+  markdown += getDescription({
+    configuration,
+    item,
+    markdownEmitter,
+  });
 
   item.members.forEach((member) => {
     if (isConstructor(member)) {
       markdown += `### Constructor\n\n`;
-      markdown += _getFunctionDescription(member);
-      markdown += _getFunctionExcerpt(member, `new ${className}`);
-      markdown += _getArgumentsTable(member, packageCanonicalReference);
+      markdown += getDescription({
+        configuration,
+        item: member,
+        markdownEmitter,
+      });
+      markdown += _getFunctionExcerpt(member, `new ${name}`);
+      markdown += "\n";
+      markdown += getArgumentsTable(member, {
+        configuration,
+        markdownEmitter,
+      });
       markdown += "\n\n";
     } else if (isMethod(member)) {
       markdown += `### ${member.name}\n\n`;
-      markdown += _getFunctionDescription(member);
+      markdown += getDescription({
+        configuration,
+        item: member,
+        markdownEmitter,
+      });
       markdown += _getFunctionExcerpt(
         member,
-        `${className[0].toLowerCase()}${className.slice(1)}.${member.name}`
+        `${name[0].toLowerCase()}${name.slice(1)}.${member.name}`
       );
-      markdown += _getArgumentsTable(member, packageCanonicalReference);
+      markdown += "\n";
+      markdown += getArgumentsTable(member, {
+        markdownEmitter,
+        configuration,
+      });
       markdown += "\n\n";
     }
   });

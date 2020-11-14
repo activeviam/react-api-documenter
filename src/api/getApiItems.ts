@@ -31,11 +31,11 @@ export interface ApiItems {
   props: { [name: string]: ApiInterface };
 }
 
-const accumulate = (acc: ApiItems, item: ApiItem, ignorePattern: RegExp) => {
+const accumulate = (acc: ApiItems, item: ApiItem, ignorePattern?: RegExp) => {
   // The interesting items all have a `name` property.
   const name = (item as any).name;
 
-  if (name && !name.match(ignorePattern)) {
+  if (name && (ignorePattern === undefined || !name.match(ignorePattern))) {
     if (isClass(item)) {
       if (isInterpretedAsError(item)) {
         acc.errors[item.name] = item;
@@ -76,7 +76,7 @@ const accumulate = (acc: ApiItems, item: ApiItem, ignorePattern: RegExp) => {
 
 export const getApiItems = (
   api: ApiPackage,
-  ignorePattern: RegExp
+  ignorePattern?: RegExp
 ): ApiItems => {
   const acc: ApiItems = {
     classes: {},

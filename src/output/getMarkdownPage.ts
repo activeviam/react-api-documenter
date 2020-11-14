@@ -1,3 +1,6 @@
+import { MarkdownDocumenter } from "@microsoft/api-documenter/lib/documenters/MarkdownDocumenter";
+import { MarkdownEmitter } from "@microsoft/api-documenter/lib/markdown/MarkdownEmitter";
+import { TSDocConfiguration } from "@microsoft/tsdoc";
 import { ApiItems } from "../api/getApiItems";
 import { getMardownSection } from "./getMarkdownSection";
 
@@ -16,27 +19,37 @@ const labels = {
 /**
  * Returns the markdown section corresponding to an API page (for instance, functions in general).
  */
-export const getMarkdownPage = (
-  items: ApiItems,
-  kind: keyof ApiItems,
-  packageCanonicalReference: string
-): string => {
+export const getMarkdownPage = ({
+  configuration,
+  items,
+  key,
+  packageCanonicalReference,
+  markdownEmitter,
+}: {
+  configuration: TSDocConfiguration;
+  items: ApiItems;
+  key: keyof ApiItems;
+  packageCanonicalReference: string;
+  markdownEmitter: MarkdownEmitter;
+}): string => {
   // This top comment is helpful for Docusaurus integration
   let markdown = `---
-title: ${labels[kind]}
-sidebar_label: ${labels[kind]}
+title: ${labels[key]}
+sidebar_label: ${labels[key]}
 ---
   \n`;
 
   // Props are documented alongside their corresponding Components.
-  if (kind !== "props") {
-    Object.keys(items[kind]).forEach((name) => {
-      markdown += `${getMardownSection(
+  if (key !== "props") {
+    Object.keys(items[key]).forEach((name) => {
+      markdown += `${getMardownSection({
+        configuration,
         items,
-        kind,
+        key,
+        markdownEmitter,
         name,
-        packageCanonicalReference
-      )}\n\n`;
+        packageCanonicalReference,
+      })}\n\n`;
     });
   }
 

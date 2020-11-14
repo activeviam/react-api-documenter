@@ -1,18 +1,23 @@
-import { ApiItems } from "../api/getApiItems";
 import { getDescription } from "./getDescription";
-import { getDocComment } from "./getDocComment";
+import { MarkdownGetterArguments } from "./output.types";
 
 /**
  * Returns the markdown string for a variable
  */
-export const getMarkdownForVariable = (
-  items: ApiItems,
-  variableName: string
-): string => {
-  let markdown = `## ${variableName}\n\n`;
-  const variable = items.variables[variableName];
+export const getMarkdownForVariable = ({
+  configuration,
+  items,
+  markdownEmitter,
+  name,
+}: MarkdownGetterArguments): string => {
+  let markdown = `## ${name}\n\n`;
+  const variable = items.variables[name];
 
-  markdown += getDescription(getDocComment(variable));
+  markdown += getDescription({
+    configuration,
+    item: variable,
+    markdownEmitter,
+  });
 
   return markdown;
 };

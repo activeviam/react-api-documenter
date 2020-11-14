@@ -1,9 +1,13 @@
 import * as path from "path";
-import { ApiPackage } from "@microsoft/api-extractor-model";
-import { readdir, writeFile } from "fs-extra";
+import { ApiModel, ApiPackage } from "@microsoft/api-extractor-model";
+import { readdir, writeFile, ensureDir } from "fs-extra";
 
 import { ApiItems, getApiItems } from "./api/getApiItems";
 import { getMarkdownPage } from "./output/getMarkdownPage";
+import { initConfiguration } from "./initConfiguration";
+import { MarkdownEmitterWithLinks } from "./MarkdownEmitterWithLinks";
+
+const configuration = initConfiguration();
 
 /**
  * Reads the .api.json file under `inputFolder` and creates the documentation markdown files under `outputFolder`.
@@ -11,7 +15,7 @@ import { getMarkdownPage } from "./output/getMarkdownPage";
 export const generateMarkdown = async (
   inputFolder: string,
   outputFolder: string,
-  ignorePattern: RegExp
+  ignorePattern?: RegExp
 ) => {
   const fileNames = await readdir(inputFolder);
   const apiFileName = fileNames.find((fileName) =>
@@ -28,7 +32,14 @@ export const generateMarkdown = async (
     path.resolve(inputFolder, apiFileName)
   );
 
+  const apiModel = new ApiModel();
+  apiModel.addMember(apiPackage);
+
   const items = getApiItems(apiPackage, ignorePattern);
+
+  const markdownEmitter = new MarkdownEmitterWithLinks(apiModel, items);
+
+  await ensureDir(outputFolder);
 
   await Promise.all(
     Object.keys(items).map((key: keyof ApiItems) => {
@@ -36,11 +47,13 @@ export const generateMarkdown = async (
         // We don't generate a dedicated page for props: they are inlined with their corresponding Components.
         return Promise.resolve();
       }
-      const markdownPage = getMarkdownPage(
+      const markdownPage = getMarkdownPage({
+        configuration,
         items,
         key,
-        apiPackage.canonicalReference.toString()
-      );
+        markdownEmitter,
+        packageCanonicalReference: apiPackage.canonicalReference.toString(),
+      });
       return writeFile(path.resolve(outputFolder, `${key}.md`), markdownPage);
     })
   );

@@ -2,6 +2,8 @@ import { ApiConstructor, ApiFunction } from "@microsoft/api-extractor-model";
 
 import { getArgumentsTable } from "./getArgumentsTable";
 import { getDescription } from "./getDescription";
+import { getRemarksSection } from "./getRemarkSections";
+import { indent } from "./indent";
 import { MarkdownGetterArguments } from "./output.types";
 
 /**
@@ -12,15 +14,12 @@ export const _getFunctionExcerpt = (
   name: string
 ): string => {
   return `\`\`\`typescript
-${name}(${item.parameters
-    .map((parameter) =>
-      parameter.name
-        .replace(/{ /gm, "{\n\t")
-        .replace(/, }/gm, "\n}")
-        .replace(/, /gm, ",\n\t")
-    )
-    .join(", ")})
+${name}(${indent(
+    item.parameters.map((parameter) => parameter.name).join(", "),
+    { characterBreakingLine: ",", isEscaped: false }
+  )})
 \`\`\`
+
 `;
 };
 
@@ -29,11 +28,7 @@ ${name}(${item.parameters
  */
 export const getMarkdownForFunction = (
   item: ApiFunction,
-  {
-    configuration,
-    markdownEmitter,
-    packageCanonicalReference,
-  }: MarkdownGetterArguments
+  { configuration, items, markdownEmitter }: MarkdownGetterArguments
 ): string => {
   let markdown = `## ${item.name}\n\n`;
 
@@ -45,9 +40,21 @@ export const getMarkdownForFunction = (
 
   markdown += _getFunctionExcerpt(item, item.name);
 
-  markdown += "\n";
+  markdown += getArgumentsTable(item, {
+    configuration,
+    items,
+    markdownEmitter,
+  });
 
-  markdown += getArgumentsTable(item, { configuration, markdownEmitter });
+  const remarkSections = getRemarksSection(item, {
+    configuration,
+    markdownEmitter,
+  });
+
+  if (remarkSections) {
+    markdown += "\n";
+    markdown += remarkSections;
+  }
 
   return markdown;
 };

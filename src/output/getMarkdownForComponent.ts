@@ -1,6 +1,6 @@
 import { ApiPropertySignature } from "@microsoft/api-extractor-model";
 import { getDescription } from "./getDescription";
-import { getPropsTable } from "./getPropsTable";
+import { getInterfaceTable } from "./getInterfaceTable";
 import { MarkdownGetterArguments } from "./output.types";
 
 /**
@@ -35,12 +35,15 @@ ${
 />
 \`\`\`
 
-${getPropsTable({
-  configuration,
-  item: props,
-  markdownEmitter,
-  packageCanonicalReference,
-})}`;
+${
+  props
+    ? getInterfaceTable(props, {
+        configuration,
+        items,
+        markdownEmitter,
+      })
+    : ""
+}`;
 
   return markdown;
 };

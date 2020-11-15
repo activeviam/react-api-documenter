@@ -36,6 +36,7 @@ export const getMarkdownForClass = ({
       markdown += "\n";
       markdown += getArgumentsTable(member, {
         configuration,
+        items,
         markdownEmitter,
       });
       markdown += "\n\n";
@@ -53,6 +54,7 @@ export const getMarkdownForClass = ({
       markdown += "\n";
       markdown += getArgumentsTable(member, {
         markdownEmitter,
+        items,
         configuration,
       });
       markdown += "\n\n";

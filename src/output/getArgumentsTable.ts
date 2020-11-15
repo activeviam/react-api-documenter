@@ -1,76 +1,35 @@
 import { MarkdownEmitter } from "@microsoft/api-documenter/lib/markdown/MarkdownEmitter";
 import { DocTable } from "@microsoft/api-documenter/lib/nodes/DocTable";
-import { DocTableCell } from "@microsoft/api-documenter/lib/nodes/DocTableCell";
 import { DocTableRow } from "@microsoft/api-documenter/lib/nodes/DocTableRow";
-import { DocHeading } from "@microsoft/api-documenter/lib/nodes/DocHeading";
 import { DocEmphasisSpan } from "@microsoft/api-documenter/lib/nodes/DocEmphasisSpan";
 import {
   ApiConstructor,
   ApiDocumentedItem,
   ApiFunction,
   ApiReturnTypeMixin,
-  Excerpt,
 } from "@microsoft/api-extractor-model";
 import {
-  DocLinkTag,
-  DocNodeContainer,
   DocParagraph,
   DocPlainText,
   DocSection,
   StringBuilder,
   TSDocConfiguration,
 } from "@microsoft/tsdoc";
-
-const appendExcerptWithHyperlinks = (
-  docNodeContainer: DocNodeContainer,
-  excerpt: Excerpt,
-  { configuration }: { configuration: TSDocConfiguration }
-): void => {
-  for (const token of excerpt.spannedTokens) {
-    const unwrappedTokenText: string = token.text.replace(/[\r\n]+/g, " ");
-
-    // If it's hyperlinkable, then append a DocLinkTag
-    if (token.kind === "Reference" && token.canonicalReference) {
-      docNodeContainer.appendNode(
-        new DocLinkTag({
-          configuration,
-          tagName: "@link",
-          linkText: unwrappedTokenText,
-          urlDestination: `types#${token.text.toLowerCase()}`,
-        })
-      );
-    } else {
-      // Otherwise append non-hyperlinked text
-      docNodeContainer.appendNode(
-        new DocPlainText({ configuration, text: unwrappedTokenText })
-      );
-    }
-  }
-};
-
-const createParagraphForTypeExcerpt = (
-  excerpt: Excerpt,
-  { configuration }: { configuration: TSDocConfiguration }
-): DocParagraph => {
-  const paragraph: DocParagraph = new DocParagraph({ configuration });
-
-  if (!excerpt.text.trim()) {
-    paragraph.appendNode(
-      new DocPlainText({ configuration, text: "(not declared)" })
-    );
-  } else {
-    appendExcerptWithHyperlinks(paragraph, excerpt, { configuration });
-  }
-
-  return paragraph;
-};
+import { ApiItems } from "../api/getApiItems";
+import { createParagraphForTypeExcerpt } from "./createParagraphForTypeExcerpt";
+import { IndentedTableCell } from "./IndentedTableCell";
 
 export const getArgumentsTable = (
   apiFunction: ApiFunction | ApiConstructor,
   {
-    markdownEmitter,
     configuration,
-  }: { markdownEmitter: MarkdownEmitter; configuration: TSDocConfiguration }
+    items,
+    markdownEmitter,
+  }: {
+    configuration: TSDocConfiguration;
+    items: ApiItems;
+    markdownEmitter: MarkdownEmitter;
+  }
 ): string => {
   const docSection = new DocSection({ configuration });
   const parametersTable = new DocTable({
@@ -88,17 +47,26 @@ export const getArgumentsTable = (
 
     parametersTable.addRow(
       new DocTableRow({ configuration }, [
-        new DocTableCell({ configuration }, [
-          new DocParagraph({ configuration }, [
-            new DocPlainText({ configuration, text: apiParameter.name }),
-          ]),
-        ]),
-        new DocTableCell({ configuration }, [
-          createParagraphForTypeExcerpt(apiParameter.parameterTypeExcerpt, {
-            configuration,
-          }),
-        ]),
-        new DocTableCell({ configuration }, parameterDescription.nodes),
+        new IndentedTableCell(
+          { configuration },
+          [
+            new DocParagraph({ configuration }, [
+              new DocPlainText({ configuration, text: apiParameter.name }),
+            ]),
+          ],
+          { isIndented: true, characterBreakingLine: "," }
+        ),
+        new IndentedTableCell(
+          { configuration },
+          [
+            createParagraphForTypeExcerpt(apiParameter.parameterTypeExcerpt, {
+              configuration,
+              items,
+            }),
+          ],
+          { isIndented: true, characterBreakingLine: ";" }
+        ),
+        new IndentedTableCell({ configuration }, parameterDescription.nodes),
       ])
     );
   }
@@ -119,6 +87,7 @@ export const getArgumentsTable = (
     docSection.appendNode(
       createParagraphForTypeExcerpt(apiFunction.returnTypeExcerpt, {
         configuration,
+        items,
       })
     );
 

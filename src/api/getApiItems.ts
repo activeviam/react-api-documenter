@@ -36,34 +36,37 @@ const accumulate = (acc: ApiItems, item: ApiItem, ignorePattern?: RegExp) => {
   const name = (item as any).name;
 
   if (name && (ignorePattern === undefined || !name.match(ignorePattern))) {
+    // Avoid "_2" appended at the end of a name when it is a reserved keyword.
+    const effectiveName = name.replace(/_[0-9]+$/, "");
+
     if (isClass(item)) {
       if (isInterpretedAsError(item)) {
-        acc.errors[item.name] = item;
+        acc.errors[effectiveName] = item;
       } else {
-        acc.classes[item.name] = item;
+        acc.classes[effectiveName] = item;
       }
     } else if (isFunction(item)) {
       if (isInterpretedAsHook(item)) {
-        acc.hooks[item.name] = item;
+        acc.hooks[effectiveName] = item;
       } else {
-        acc.functions[item.name] = item;
+        acc.functions[effectiveName] = item;
       }
     } else if (isVariable(item)) {
       if (isInterpretedAsContextProvider(item)) {
-        acc.contextProviders[item.name] = item;
+        acc.contextProviders[effectiveName] = item;
       } else if (isInterpretedAsComponent(item)) {
-        acc.components[item.name] = item;
+        acc.components[effectiveName] = item;
       } else {
-        acc.variables[item.name] = item;
+        acc.variables[effectiveName] = item;
       }
     } else if (isInterface(item)) {
       if (isInterpretedAsProps(item)) {
-        acc.props[item.name.slice(0, -5)] = item;
+        acc.props[effectiveName.slice(0, -5)] = item;
       } else {
-        acc.types[item.name] = item;
+        acc.types[effectiveName] = item;
       }
     } else if (isTypeAlias(item)) {
-      acc.types[item.name] = item;
+      acc.types[effectiveName] = item;
     }
   }
 

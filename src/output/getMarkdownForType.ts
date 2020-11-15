@@ -1,10 +1,11 @@
-import { ApiItems } from "../api/getApiItems";
+import { StringBuilder } from "@microsoft/tsdoc";
 import { isTypeAlias } from "../api/isTypeAlias";
+import { createParagraphForTypeExcerpt } from "./createParagraphForTypeExcerpt";
 import { getDescription } from "./getDescription";
-import { getFullExcerpt } from "./getFullExcerpt";
-import { getPropsTable } from "./getPropsTable";
+import { getInterfaceTable } from "./getInterfaceTable";
+import { getRemarksSection } from "./getRemarkSections";
+import { indent } from "./indent";
 import { MarkdownGetterArguments } from "./output.types";
-import { removeComments } from "./removeComments";
 
 /**
  * Returns the markdown string for a Type
@@ -12,7 +13,6 @@ import { removeComments } from "./removeComments";
 export const getMarkdownForType = ({
   configuration,
   items,
-  packageCanonicalReference,
   markdownEmitter,
   name,
 }: MarkdownGetterArguments): string => {
@@ -26,35 +26,39 @@ export const getMarkdownForType = ({
   });
 
   if (isTypeAlias(type)) {
-    const fullExcerpt = removeComments(
-      getFullExcerpt(type.excerptTokens, packageCanonicalReference)
-    ).replace(/;$/, "");
-    const unionTypeStartingSentence = `export declare type ${type.name} = `;
-    if (
-      fullExcerpt.startsWith(unionTypeStartingSentence) &&
-      !fullExcerpt.includes("{") &&
-      !fullExcerpt.includes("<")
-    ) {
-      // Union type: create a bullet list
-      markdown += `${fullExcerpt
-        .slice(unionTypeStartingSentence.length)
-        .split(" | ")
-        .map((text) => `- ${text.replace(/\n/gm, "")}`)
-        .join("\n")}`;
-    } else {
-      // Type assigned as a different type (usually because it extends it or gives it a generic type)
-      markdown += `\`\`\`typescript
-${type.excerptTokens.map(({ text }) => text).join("")}
-\`\`\``;
-    }
+    const excerpt = markdownEmitter
+      .emit(
+        new StringBuilder(),
+        createParagraphForTypeExcerpt(type.typeExcerpt, {
+          configuration,
+          items,
+        }),
+        { configuration }
+      )
+      .trim();
+    markdown += excerpt.includes("\\|")
+      ? `- ${excerpt
+          .split("\\|")
+          .map((bit) => indent(bit))
+          .join("\n-")}`
+      : indent(excerpt);
   } else {
     // Actual atomic type
-    markdown += `${getPropsTable({
+    markdown += `${getInterfaceTable(type, {
       configuration,
-      item: type,
+      items,
       markdownEmitter,
-      packageCanonicalReference,
     })}`;
+  }
+
+  const remarkSections = getRemarksSection(type, {
+    configuration,
+    markdownEmitter,
+  });
+
+  if (remarkSections) {
+    markdown += "\n";
+    markdown += remarkSections;
   }
 
   return markdown;

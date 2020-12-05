@@ -3,6 +3,7 @@ import { ApiConstructor, ApiFunction } from "@microsoft/api-extractor-model";
 import { getArgumentsTable } from "./getArgumentsTable";
 import { getDescription } from "./getDescription";
 import { getRemarksSection } from "./getRemarkSections";
+import { getThrowsSection } from "./getThrowSection";
 import { indent } from "./indent";
 import { MarkdownGetterArguments } from "./output.types";
 
@@ -54,6 +55,16 @@ export const getMarkdownForFunction = (
   if (remarkSections) {
     markdown += "\n";
     markdown += remarkSections;
+  }
+
+  const throwsSections = getThrowsSection(item, {
+    configuration,
+    markdownEmitter,
+  });
+
+  if (throwsSections) {
+    markdown += "\n\n";
+    markdown += throwsSections;
   }
 
   return markdown;

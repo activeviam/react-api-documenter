@@ -3,6 +3,8 @@ import { isMethod } from "../api/isMethod";
 import { getArgumentsTable } from "./getArgumentsTable";
 import { getDescription } from "./getDescription";
 import { _getFunctionExcerpt } from "./getMarkdownForFunction";
+import { getRemarksSection } from "./getRemarkSections";
+import { getThrowsSection } from "./getThrowSection";
 import { MarkdownGetterArguments } from "./output.types";
 
 /**
@@ -57,6 +59,27 @@ export const getMarkdownForClass = ({
         items,
         configuration,
       });
+
+      const remarkSections = getRemarksSection(item, {
+        configuration,
+        markdownEmitter,
+      });
+
+      if (remarkSections) {
+        markdown += "\n";
+        markdown += remarkSections;
+      }
+
+      const throwsSections = getThrowsSection(item, {
+        configuration,
+        markdownEmitter,
+      });
+
+      if (throwsSections) {
+        markdown += "\n";
+        markdown += throwsSections;
+      }
+
       markdown += "\n\n";
     }
   });

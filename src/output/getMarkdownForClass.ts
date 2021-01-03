@@ -1,3 +1,5 @@
+import { groupBy, minBy } from "lodash";
+
 import { isConstructor } from "../api/isConstructor";
 import { isMethod } from "../api/isMethod";
 import { getArgumentsTable } from "./getArgumentsTable";
@@ -26,62 +28,72 @@ export const getMarkdownForClass = ({
     markdownEmitter,
   });
 
-  item.members.forEach((member) => {
-    if (isConstructor(member)) {
-      markdown += `### Constructor\n\n`;
-      markdown += getDescription({
-        configuration,
-        item: member,
-        markdownEmitter,
-      });
-      markdown += _getFunctionExcerpt(member, `new ${name}`);
+  const constructor = item.members.find(isConstructor);
+  if (constructor !== undefined) {
+    markdown += `### Constructor\n\n`;
+    markdown += getDescription({
+      configuration,
+      item: constructor,
+      markdownEmitter,
+    });
+    markdown += _getFunctionExcerpt(constructor, `new ${name}`);
+    markdown += "\n";
+    markdown += getArgumentsTable(constructor, {
+      configuration,
+      items,
+      markdownEmitter,
+    });
+    markdown += "\n\n";
+  }
+
+  const methods = item.members.filter(isMethod);
+  const methodsGroupedByName = Object.values(groupBy(methods, "name"));
+
+  // In case of function overloads, only the implemented method is documented.
+  // See https://www.typescriptlang.org/docs/handbook/functions.html#overloads
+  const documentedMethods = methodsGroupedByName.map((homonymMethods) =>
+    minBy(homonymMethods, "overloadIndex")
+  );
+
+  documentedMethods.forEach((method) => {
+    markdown += `### ${method.name}\n\n`;
+    markdown += getDescription({
+      configuration,
+      item: method,
+      markdownEmitter,
+    });
+    markdown += _getFunctionExcerpt(
+      method,
+      `${name[0].toLowerCase()}${name.slice(1)}.${method.name}`
+    );
+    markdown += "\n";
+    markdown += getArgumentsTable(method, {
+      markdownEmitter,
+      items,
+      configuration,
+    });
+
+    const remarkSections = getRemarksSection(item, {
+      configuration,
+      markdownEmitter,
+    });
+
+    if (remarkSections) {
       markdown += "\n";
-      markdown += getArgumentsTable(member, {
-        configuration,
-        items,
-        markdownEmitter,
-      });
-      markdown += "\n\n";
-    } else if (isMethod(member)) {
-      markdown += `### ${member.name}\n\n`;
-      markdown += getDescription({
-        configuration,
-        item: member,
-        markdownEmitter,
-      });
-      markdown += _getFunctionExcerpt(
-        member,
-        `${name[0].toLowerCase()}${name.slice(1)}.${member.name}`
-      );
-      markdown += "\n";
-      markdown += getArgumentsTable(member, {
-        markdownEmitter,
-        items,
-        configuration,
-      });
-
-      const remarkSections = getRemarksSection(item, {
-        configuration,
-        markdownEmitter,
-      });
-
-      if (remarkSections) {
-        markdown += "\n";
-        markdown += remarkSections;
-      }
-
-      const throwsSections = getThrowsSection(item, {
-        configuration,
-        markdownEmitter,
-      });
-
-      if (throwsSections) {
-        markdown += "\n";
-        markdown += throwsSections;
-      }
-
-      markdown += "\n\n";
+      markdown += remarkSections;
     }
+
+    const throwsSections = getThrowsSection(item, {
+      configuration,
+      markdownEmitter,
+    });
+
+    if (throwsSections) {
+      markdown += "\n";
+      markdown += throwsSections;
+    }
+
+    markdown += "\n\n";
   });
 
   return markdown;

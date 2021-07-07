@@ -1,5 +1,6 @@
 import { ApiPropertySignature } from "@microsoft/api-extractor-model";
 import { getDescription } from "./getDescription";
+import { getInterfaceMembers } from "./getInterfaceMembers";
 import { getInterfaceTable } from "./getInterfaceTable";
 import { MarkdownGetterArguments } from "./output.types";
 
@@ -27,7 +28,7 @@ export const getMarkdownForComponent = ({
 <${name}
 ${
   props
-    ? props.members
+    ? getInterfaceMembers(props, items)
         .map((prop: ApiPropertySignature) => `\t${prop.name}={${prop.name}}`)
         .join("\n")
     : "\t{...}"

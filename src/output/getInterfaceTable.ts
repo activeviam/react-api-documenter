@@ -19,6 +19,7 @@ import {
 } from "@microsoft/tsdoc";
 import { ApiItems } from "../api/getApiItems";
 import { createParagraphForTypeExcerpt } from "./createParagraphForTypeExcerpt";
+import { getInterfaceMembers } from "./getInterfaceMembers";
 import { IndentedTableCell } from "./IndentedTableCell";
 
 const createTitleCell = (
@@ -127,7 +128,9 @@ export const getInterfaceTable = (
     headerTitles: ["Method", "Description"],
   });
 
-  for (const apiMember of item.members) {
+  const members =  getInterfaceMembers(item, items);
+
+  for (const apiMember of members) {
     switch (apiMember.kind) {
       case "ConstructSignature":
       case "MethodSignature": {

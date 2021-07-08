@@ -15,7 +15,7 @@ export const getMarkdownForComponent = ({
 }: MarkdownGetterArguments): string => {
   let markdown = `## ${name}\n\n`;
   const component = items.components[name];
-  const props = items.props[name];
+  const props = items.props[`${name}Props`];
 
   markdown += getDescription({
     configuration,

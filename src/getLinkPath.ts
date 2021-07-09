@@ -9,7 +9,6 @@ const fileNames = [
   "hooks",
   "types",
   "variables",
-  "props",
 ];
 
 export const getLinkPath = (

@@ -1,3 +1,3 @@
 import { generateMarkdown } from "./generateMarkdown";
 
-generateMarkdown(".input", ".output");
+generateMarkdown(".input", ".output", /^_?Icon/);

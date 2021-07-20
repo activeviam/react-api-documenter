@@ -62,9 +62,8 @@ const accumulate = (acc: ApiItems, item: ApiItem, ignorePattern?: RegExp) => {
     } else if (isInterface(item)) {
       if (isInterpretedAsProps(item)) {
         acc.props[effectiveName] = item;
-      } else {
-        acc.types[effectiveName] = item;
       }
+      acc.types[effectiveName] = item;
     } else if (isTypeAlias(item)) {
       acc.types[effectiveName] = item;
     }

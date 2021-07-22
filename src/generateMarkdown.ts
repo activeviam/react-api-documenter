@@ -43,10 +43,6 @@ export const generateMarkdown = async (
 
   await Promise.all(
     Object.keys(items).map((key: keyof ApiItems) => {
-      if (key === "props") {
-        // We don't generate a dedicated page for props: they are inlined with their corresponding Components.
-        return Promise.resolve();
-      }
       const markdownPage = getMarkdownPage({
         configuration,
         items,

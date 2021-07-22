@@ -11,7 +11,6 @@ import {
 import { isInterpretedAsError } from "./isInterpretedAsError";
 import { isInterpretedAsHook } from "./isInterpretedAsHook";
 import { isInterpretedAsComponent } from "./isInterpretedAsComponent";
-import { isInterpretedAsProps } from "./isInterpretedAsProps";
 import { isInterpretedAsContextProvider } from "./isInterpretedAsContextProvider";
 import { isClass } from "./isClass";
 import { isFunction } from "./isFunction";
@@ -28,7 +27,6 @@ export interface ApiItems {
   hooks: { [name: string]: ApiFunction };
   types: { [name: string]: ApiInterface | ApiTypeAlias };
   variables: { [name: string]: ApiVariable };
-  props: { [name: string]: ApiInterface };
 }
 
 const accumulate = (acc: ApiItems, item: ApiItem, ignorePattern?: RegExp) => {
@@ -60,9 +58,6 @@ const accumulate = (acc: ApiItems, item: ApiItem, ignorePattern?: RegExp) => {
         acc.variables[effectiveName] = item;
       }
     } else if (isInterface(item)) {
-      if (isInterpretedAsProps(item)) {
-        acc.props[effectiveName] = item;
-      }
       acc.types[effectiveName] = item;
     } else if (isTypeAlias(item)) {
       acc.types[effectiveName] = item;
@@ -89,7 +84,6 @@ export const getApiItems = (
     hooks: {},
     types: {},
     variables: {},
-    props: {},
   };
 
   accumulate(acc, api, ignorePattern);

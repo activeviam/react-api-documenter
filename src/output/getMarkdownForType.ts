@@ -18,7 +18,7 @@ export const getMarkdownForType = ({
   if (isPropsTypeWithMatchingComponent(name, items)) {
     // Do not document this type in the `types` page if it is a props type with a component associated to it.
     // These are already documented next to their component.
-    return;
+    return "";
   }
   let markdown = `## ${name}\n\n`;
   const type = items.types[name];

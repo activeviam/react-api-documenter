@@ -1,10 +1,9 @@
-import { StringBuilder } from "@microsoft/tsdoc";
 import { isTypeAlias } from "../api/isTypeAlias";
-import { createParagraphForTypeExcerpt } from "./createParagraphForTypeExcerpt";
 import { getDescription } from "./getDescription";
 import { getInterfaceTable } from "./getInterfaceTable";
 import { getRemarksSection } from "./getRemarkSections";
-import { indent } from "./indent";
+import { getTypeDescription } from "./getTypeDescription";
+import { isPropsTypeWithMatchingComponent } from "./isPropsTypeWithMatchingComponent";
 import { MarkdownGetterArguments } from "./output.types";
 
 /**
@@ -16,6 +15,11 @@ export const getMarkdownForType = ({
   markdownEmitter,
   name,
 }: MarkdownGetterArguments): string => {
+  if (isPropsTypeWithMatchingComponent(name, items)) {
+    // Do not document this type in the `types` page if it is a props type with a component associated to it.
+    // These are already documented next to their component.
+    return;
+  }
   let markdown = `## ${name}\n\n`;
   const type = items.types[name];
 
@@ -26,22 +30,12 @@ export const getMarkdownForType = ({
   });
 
   if (isTypeAlias(type)) {
-    const excerpt = markdownEmitter
-      .emit(
-        new StringBuilder(),
-        createParagraphForTypeExcerpt(type.typeExcerpt, {
-          configuration,
-          items,
-        }),
-        { configuration }
-      )
-      .trim();
-    markdown += excerpt.includes("\\|")
-      ? `- ${excerpt
-          .split("\\|")
-          .map((bit) => indent(bit))
-          .join("\n-")}`
-      : indent(excerpt);
+    markdown += getTypeDescription({
+      configuration,
+      items,
+      type,
+      markdownEmitter,
+    });
   } else {
     // Actual atomic type
     markdown += `${getInterfaceTable(type, {

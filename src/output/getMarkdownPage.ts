@@ -1,4 +1,3 @@
-import { MarkdownDocumenter } from "@microsoft/api-documenter/lib/documenters/MarkdownDocumenter";
 import { MarkdownEmitter } from "@microsoft/api-documenter/lib/markdown/MarkdownEmitter";
 import { TSDocConfiguration } from "@microsoft/tsdoc";
 import { ApiItems } from "../api/getApiItems";
@@ -40,18 +39,16 @@ sidebar_label: ${labels[key]}
   \n`;
 
   // Props are documented alongside their corresponding Components.
-  if (key !== "props") {
-    Object.keys(items[key]).forEach((name) => {
-      markdown += `${getMardownSection({
-        configuration,
-        items,
-        key,
-        markdownEmitter,
-        name,
-        packageCanonicalReference,
-      })}\n\n`;
-    });
-  }
+  Object.keys(items[key]).forEach((name) => {
+    markdown += `${getMardownSection({
+      configuration,
+      items,
+      key,
+      markdownEmitter,
+      name,
+      packageCanonicalReference,
+    })}\n\n`;
+  });
 
   return markdown;
 };

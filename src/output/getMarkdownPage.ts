@@ -40,14 +40,17 @@ sidebar_label: ${labels[key]}
 
   // Props are documented alongside their corresponding Components.
   Object.keys(items[key]).forEach((name) => {
-    markdown += `${getMardownSection({
+    const markdownForItem = getMardownSection({
       configuration,
       items,
       key,
       markdownEmitter,
       name,
       packageCanonicalReference,
-    })}\n\n`;
+    });
+    if (markdownForItem && markdownForItem.trim().length > 0) {
+      markdown += `${markdownForItem}\n\n`;
+    }
   });
 
   return markdown;

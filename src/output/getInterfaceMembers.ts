@@ -12,7 +12,12 @@ function _getInterfaceMembers(
 
   if (parentTypes.length > 0) {
     parentTypes.forEach((parentType) => {
-      const extendedApiItem = items.types[parentType.excerpt.text.trim()];
+      const extendedApiItem =
+        items.types[
+          parentType.excerpt.tokens[
+            parentType.excerpt.tokenRange.startIndex
+          ].text.trim()
+        ];
       if (extendedApiItem && isInterface(extendedApiItem)) {
         _getInterfaceMembers(extendedApiItem, items, membersAccumulator);
       }

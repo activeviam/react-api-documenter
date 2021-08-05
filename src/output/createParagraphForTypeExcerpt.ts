@@ -15,7 +15,12 @@ const appendExcerptWithHyperlinks = (
   {
     configuration,
     items,
-  }: { configuration: TSDocConfiguration; items: ApiItems }
+    linkBaseUrl,
+  }: {
+    configuration: TSDocConfiguration;
+    items: ApiItems;
+    linkBaseUrl?: string;
+  }
 ): void => {
   for (const token of excerpt.spannedTokens) {
     const linkedItemName: string = token.text.replace(/[\r\n]+/g, " ");
@@ -27,7 +32,7 @@ const appendExcerptWithHyperlinks = (
           configuration,
           tagName: "@link",
           linkText: linkedItemName,
-          urlDestination: getLinkPath(linkedItemName, items),
+          urlDestination: getLinkPath(linkedItemName, items, linkBaseUrl),
         })
       );
     } else {
@@ -44,7 +49,12 @@ export const createParagraphForTypeExcerpt = (
   {
     configuration,
     items,
-  }: { configuration: TSDocConfiguration; items: ApiItems }
+    linkBaseUrl,
+  }: {
+    configuration: TSDocConfiguration;
+    items: ApiItems;
+    linkBaseUrl?: string;
+  }
 ): DocParagraph => {
   const paragraph: DocParagraph = new DocParagraph({ configuration });
 
@@ -53,7 +63,11 @@ export const createParagraphForTypeExcerpt = (
       new DocPlainText({ configuration, text: "(not declared)" })
     );
   } else {
-    appendExcerptWithHyperlinks(paragraph, excerpt, { configuration, items });
+    appendExcerptWithHyperlinks(paragraph, excerpt, {
+      configuration,
+      items,
+      linkBaseUrl,
+    });
   }
 
   return paragraph;

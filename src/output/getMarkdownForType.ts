@@ -14,6 +14,7 @@ export const getMarkdownForType = ({
   items,
   markdownEmitter,
   name,
+  linkBaseUrl,
 }: MarkdownGetterArguments): string => {
   if (isPropsTypeWithMatchingComponent(name, items)) {
     // Do not document this type in the `types` page if it is a props type with a component associated to it.
@@ -35,6 +36,7 @@ export const getMarkdownForType = ({
       items,
       type,
       markdownEmitter,
+      linkBaseUrl,
     });
   } else {
     // Actual atomic type
@@ -42,6 +44,7 @@ export const getMarkdownForType = ({
       configuration,
       items,
       markdownEmitter,
+      linkBaseUrl,
     })}`;
   }
 

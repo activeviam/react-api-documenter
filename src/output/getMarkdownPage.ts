@@ -24,12 +24,14 @@ export const getMarkdownPage = ({
   key,
   packageCanonicalReference,
   markdownEmitter,
+  linkBaseUrl,
 }: {
   configuration: TSDocConfiguration;
   items: ApiItems;
   key: keyof ApiItems;
   packageCanonicalReference: string;
   markdownEmitter: MarkdownEmitter;
+  linkBaseUrl: string;
 }): string => {
   // This top comment is helpful for Docusaurus integration
   let markdown = `---
@@ -47,6 +49,7 @@ sidebar_label: ${labels[key]}
       markdownEmitter,
       name,
       packageCanonicalReference,
+      linkBaseUrl,
     });
     if (markdownForItem && markdownForItem.trim().length > 0) {
       markdown += `${markdownForItem}\n\n`;

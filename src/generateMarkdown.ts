@@ -15,7 +15,8 @@ const configuration = initConfiguration();
 export const generateMarkdown = async (
   inputFolder: string,
   outputFolder: string,
-  ignorePattern?: RegExp
+  ignorePattern?: RegExp,
+  linkBaseUrl?: string
 ) => {
   const fileNames = await readdir(inputFolder);
   const apiFileName = fileNames.find((fileName) =>
@@ -37,7 +38,11 @@ export const generateMarkdown = async (
 
   const items = getApiItems(apiPackage, ignorePattern);
 
-  const markdownEmitter = new MarkdownEmitterWithLinks(apiModel, items);
+  const markdownEmitter = new MarkdownEmitterWithLinks(
+    apiModel,
+    items,
+    linkBaseUrl
+  );
 
   await ensureDir(outputFolder);
 
@@ -49,6 +54,7 @@ export const generateMarkdown = async (
         key,
         markdownEmitter,
         packageCanonicalReference: apiPackage.canonicalReference.toString(),
+        linkBaseUrl,
       });
       return writeFile(path.resolve(outputFolder, `${key}.md`), markdownPage);
     })

@@ -17,7 +17,7 @@ export const getMarkdownForClass = ({
   items,
   markdownEmitter,
   name,
-  packageCanonicalReference,
+  linkBaseUrl,
 }: MarkdownGetterArguments): string => {
   let markdown = `## ${name}\n\n`;
   const item = items.classes[name];
@@ -42,6 +42,7 @@ export const getMarkdownForClass = ({
       configuration,
       items,
       markdownEmitter,
+      linkBaseUrl,
     });
     markdown += "\n\n";
   }
@@ -71,6 +72,7 @@ export const getMarkdownForClass = ({
       markdownEmitter,
       items,
       configuration,
+      linkBaseUrl,
     });
 
     const remarkSections = getRemarksSection(item, {

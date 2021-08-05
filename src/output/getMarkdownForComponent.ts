@@ -14,7 +14,7 @@ export const getMarkdownForComponent = ({
   items,
   markdownEmitter,
   name,
-  packageCanonicalReference,
+  linkBaseUrl,
 }: MarkdownGetterArguments): string => {
   let markdown = `## ${name}\n\n`;
   const component = items.components[name];
@@ -53,6 +53,7 @@ ${
               configuration,
               items,
               markdownEmitter,
+              linkBaseUrl,
             })
       }`
     : ""

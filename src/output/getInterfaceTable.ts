@@ -42,12 +42,7 @@ const createPropertyTypeCell = (
   {
     configuration,
     items,
-    linkBaseUrl,
-  }: {
-    configuration: TSDocConfiguration;
-    items: ApiItems;
-    linkBaseUrl?: string;
-  }
+  }: { configuration: TSDocConfiguration; items: ApiItems }
 ): IndentedTableCell => {
   const section: DocSection = new DocSection({ configuration });
 
@@ -56,7 +51,6 @@ const createPropertyTypeCell = (
       createParagraphForTypeExcerpt(apiItem.propertyTypeExcerpt, {
         configuration,
         items,
-        linkBaseUrl,
       })
     );
   }
@@ -111,12 +105,10 @@ export const getInterfaceTable = (
     configuration,
     items,
     markdownEmitter,
-    linkBaseUrl,
   }: {
     configuration: TSDocConfiguration;
     items: ApiItems;
     markdownEmitter: MarkdownEmitter;
-    linkBaseUrl?: string;
   }
 ): string => {
   const docSection = new DocSection({ configuration });
@@ -136,7 +128,7 @@ export const getInterfaceTable = (
     headerTitles: ["Method", "Description"],
   });
 
-  const members = getInterfaceMembers(item, items);
+  const members =  getInterfaceMembers(item, items);
 
   for (const apiMember of members) {
     switch (apiMember.kind) {
@@ -155,11 +147,7 @@ export const getInterfaceTable = (
           eventsTable.addRow(
             new DocTableRow({ configuration }, [
               createTitleCell(apiMember, { configuration }),
-              createPropertyTypeCell(apiMember, {
-                configuration,
-                items,
-                linkBaseUrl,
-              }),
+              createPropertyTypeCell(apiMember, { configuration, items }),
               createDescriptionCell(apiMember, { configuration }),
             ])
           );
@@ -167,11 +155,7 @@ export const getInterfaceTable = (
           propertiesTable.addRow(
             new DocTableRow({ configuration }, [
               createTitleCell(apiMember, { configuration }),
-              createPropertyTypeCell(apiMember, {
-                configuration,
-                items,
-                linkBaseUrl,
-              }),
+              createPropertyTypeCell(apiMember, { configuration, items }),
               createDescriptionCell(apiMember, { configuration }),
             ])
           );

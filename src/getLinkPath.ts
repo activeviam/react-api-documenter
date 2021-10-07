@@ -14,8 +14,7 @@ const fileNames = [
 
 export const getLinkPath = (
   name: string,
-  items: ApiItems,
-  linkBaseUrl?: string
+  items: ApiItems
 ): string | undefined => {
   const fileName = fileNames.find((kind) => items[kind][name] !== undefined);
 
@@ -26,10 +25,10 @@ export const getLinkPath = (
   if (fileName === "types") {
     if (isPropsTypeWithMatchingComponent(name, items)) {
       // Found a matching component where the props are documented, hence linking to the components file.
-      return `${linkBaseUrl || "."}/components#${name.toLowerCase()}`;
+      return `./components#${name.toLowerCase()}`;
     } else {
-      return `${linkBaseUrl || "."}/types#${name.toLowerCase()}`;
+      return `./types#${name.toLowerCase()}`;
     }
   }
-  return `${linkBaseUrl || "."}/${fileName}#${name.toLowerCase()}`;
+  return `./${fileName}#${name.toLowerCase()}`;
 };

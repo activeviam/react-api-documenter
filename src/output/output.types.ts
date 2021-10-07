@@ -8,5 +8,4 @@ export interface MarkdownGetterArguments {
   markdownEmitter: MarkdownEmitter;
   packageCanonicalReference: string;
   name: string;
-  linkBaseUrl?: string;
 }

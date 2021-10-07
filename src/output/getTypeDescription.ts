@@ -10,13 +10,11 @@ export function getTypeDescription({
   markdownEmitter,
   type,
   configuration,
-  linkBaseUrl,
 }: {
   items: ApiItems;
   type: ApiTypeAlias;
   markdownEmitter: MarkdownEmitter;
   configuration: TSDocConfiguration;
-  linkBaseUrl?: string;
 }) {
   const excerpt = markdownEmitter
     .emit(
@@ -24,7 +22,6 @@ export function getTypeDescription({
       createParagraphForTypeExcerpt(type.typeExcerpt, {
         configuration,
         items,
-        linkBaseUrl,
       }),
       { configuration }
     )

@@ -7,7 +7,6 @@ import { DocTable } from "@microsoft/api-documenter/lib/nodes/DocTable";
 import { DocTableCell } from "@microsoft/api-documenter/lib/nodes/DocTableCell";
 import { ApiModel } from "@microsoft/api-extractor-model";
 import { DocLinkTag, DocNode } from "@microsoft/tsdoc";
-import { link } from "fs-extra";
 import { ApiItems } from "./api/getApiItems";
 import { getLinkPath } from "./getLinkPath";
 import { indent } from "./output/indent";
@@ -17,15 +16,10 @@ import { IndentedTableCell } from "./output/IndentedTableCell";
 // MarkdownEmitterWithLinks resolves react-api-documenter links: one page for a group of items (e.g. functions or Components) then one anchor per item.
 export class MarkdownEmitterWithLinks extends CustomMarkdownEmitter {
   private _apiItems: ApiItems;
-  private _linkBaseUrl?: string;
 
-  public constructor(
-    apiModel: ApiModel,
-    apiItems: ApiItems,
-    linkBaseUrl?: string
-  ) {
+  public constructor(apiModel: ApiModel, apiItems: ApiItems) {
     super(apiModel);
-    this._linkBaseUrl = linkBaseUrl;
+
     this._apiItems = apiItems;
   }
 
@@ -95,9 +89,7 @@ export class MarkdownEmitterWithLinks extends CustomMarkdownEmitter {
             this.writeNode(cell.content, context, false);
             writer.write = originalWrite.bind(writer);
 
-            const formattedCellContent = isIndented
-              ? indent(cellContent, { characterBreakingLine })
-              : cellContent;
+            const formattedCellContent = isIndented ? indent(cellContent, {characterBreakingLine}) : cellContent;
             writer.write(formattedCellContent);
 
             writer.write(" |");
@@ -123,11 +115,7 @@ export class MarkdownEmitterWithLinks extends CustomMarkdownEmitter {
       docLinkTag.codeDestination.memberReferences[0].memberIdentifier
         .identifier;
 
-    const linkPath = getLinkPath(
-      linkedItemName,
-      this._apiItems,
-      this._linkBaseUrl
-    );
+    const linkPath = getLinkPath(linkedItemName, this._apiItems);
 
     if (!linkPath) {
       context.writer.write(linkedItemName);

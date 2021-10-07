@@ -25,12 +25,10 @@ export const getArgumentsTable = (
     configuration,
     items,
     markdownEmitter,
-    linkBaseUrl,
   }: {
     configuration: TSDocConfiguration;
     items: ApiItems;
     markdownEmitter: MarkdownEmitter;
-    linkBaseUrl?: string;
   }
 ): string => {
   const docSection = new DocSection({ configuration });
@@ -64,7 +62,6 @@ export const getArgumentsTable = (
             createParagraphForTypeExcerpt(apiParameter.parameterTypeExcerpt, {
               configuration,
               items,
-              linkBaseUrl,
             }),
           ],
           { isIndented: true, characterBreakingLine: ";" }
@@ -91,7 +88,6 @@ export const getArgumentsTable = (
       createParagraphForTypeExcerpt(apiFunction.returnTypeExcerpt, {
         configuration,
         items,
-        linkBaseUrl,
       })
     );
 

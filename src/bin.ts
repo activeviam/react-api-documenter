@@ -14,15 +14,9 @@ command(
     const inputFolder = getArg(args, "--input-folder");
     const outputFolder = getArg(args, "--output-folder");
     const ignoreString = getArg(args, "--ignore-pattern");
-    const linkBaseUrl = getArg(args, "--link-base-url");
     const ignorePattern = ignoreString ? new RegExp(ignoreString) : undefined;
 
-    await generateMarkdown(
-      inputFolder,
-      outputFolder,
-      ignorePattern,
-      linkBaseUrl
-    );
+    await generateMarkdown(inputFolder, outputFolder, ignorePattern);
   }
 )
   .demandCommand(1, "")

@@ -29,12 +29,7 @@ ${name}(${indent(
  */
 export const getMarkdownForFunction = (
   item: ApiFunction,
-  {
-    configuration,
-    items,
-    markdownEmitter,
-    linkBaseUrl,
-  }: MarkdownGetterArguments
+  { configuration, items, markdownEmitter }: MarkdownGetterArguments
 ): string => {
   let markdown = `## ${item.name}\n\n`;
 
@@ -50,7 +45,6 @@ export const getMarkdownForFunction = (
     configuration,
     items,
     markdownEmitter,
-    linkBaseUrl,
   });
 
   const remarkSections = getRemarksSection(item, {

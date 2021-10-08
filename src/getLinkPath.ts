@@ -12,12 +12,22 @@ const fileNames = [
   "variables",
 ];
 
+const kebabize = (str: string) => {
+  return str
+    .split("")
+    .map((letter, index) => {
+      return letter.toUpperCase() === letter
+        ? `${index !== 0 ? "-" : ""}${letter.toLowerCase()}`
+        : letter;
+    })
+    .join("");
+};
+
 export const getLinkPath = (
   name: string,
   items: ApiItems
 ): string | undefined => {
   const fileName = fileNames.find((kind) => items[kind][name] !== undefined);
-
   if (!fileName) {
     return undefined;
   }
@@ -30,5 +40,5 @@ export const getLinkPath = (
       return `./types#${name.toLowerCase()}`;
     }
   }
-  return `./${fileName}#${name.toLowerCase()}`;
+  return `./${kebabize(fileName)}#${name.toLowerCase()}`;
 };

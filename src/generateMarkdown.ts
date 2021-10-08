@@ -9,6 +9,17 @@ import { MarkdownEmitterWithLinks } from "./MarkdownEmitterWithLinks";
 
 const configuration = initConfiguration();
 
+const kebabize = (str: string) => {
+  return str
+    .split("")
+    .map((letter, index) => {
+      return letter.toUpperCase() === letter
+        ? `${index !== 0 ? "-" : ""}${letter.toLowerCase()}`
+        : letter;
+    })
+    .join("");
+};
+
 /**
  * Reads the .api.json file under `inputFolder` and creates the documentation markdown files under `outputFolder`.
  */
@@ -50,7 +61,10 @@ export const generateMarkdown = async (
         markdownEmitter,
         packageCanonicalReference: apiPackage.canonicalReference.toString(),
       });
-      return writeFile(path.resolve(outputFolder, `${key}.md`), markdownPage);
+      return writeFile(
+        path.resolve(outputFolder, `${kebabize(key)}.md`),
+        markdownPage
+      );
     })
   );
 };

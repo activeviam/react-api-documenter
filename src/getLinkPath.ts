@@ -6,7 +6,7 @@ const fileNames = [
   "errors",
   "functions",
   "components",
-  "context-providers",
+  "contextProviders",
   "hooks",
   "types",
   "variables",

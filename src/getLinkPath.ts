@@ -1,5 +1,6 @@
 import { ApiItems } from "./api/getApiItems";
 import { isPropsTypeWithMatchingComponent } from "./output/isPropsTypeWithMatchingComponent";
+import { kebabCase } from "lodash";
 
 const fileNames = [
   "classes",
@@ -11,17 +12,6 @@ const fileNames = [
   "types",
   "variables",
 ];
-
-const kebabize = (str: string) => {
-  return str
-    .split("")
-    .map((letter, index) => {
-      return letter.toUpperCase() === letter
-        ? `${index !== 0 ? "-" : ""}${letter.toLowerCase()}`
-        : letter;
-    })
-    .join("");
-};
 
 export const getLinkPath = (
   name: string,
@@ -40,5 +30,5 @@ export const getLinkPath = (
       return `./types#${name.toLowerCase()}`;
     }
   }
-  return `./${kebabize(fileName)}#${name.toLowerCase()}`;
+  return `./${kebabCase(fileName)}#${name.toLowerCase()}`;
 };

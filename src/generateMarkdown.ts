@@ -1,6 +1,7 @@
 import * as path from "path";
 import { ApiModel, ApiPackage } from "@microsoft/api-extractor-model";
 import { readdir, writeFile, ensureDir } from "fs-extra";
+import { kebabCase } from "lodash";
 
 import { ApiItems, getApiItems } from "./api/getApiItems";
 import { getMarkdownPage } from "./output/getMarkdownPage";
@@ -8,17 +9,6 @@ import { initConfiguration } from "./initConfiguration";
 import { MarkdownEmitterWithLinks } from "./MarkdownEmitterWithLinks";
 
 const configuration = initConfiguration();
-
-const kebabize = (str: string) => {
-  return str
-    .split("")
-    .map((letter, index) => {
-      return letter.toUpperCase() === letter
-        ? `${index !== 0 ? "-" : ""}${letter.toLowerCase()}`
-        : letter;
-    })
-    .join("");
-};
 
 /**
  * Reads the .api.json file under `inputFolder` and creates the documentation markdown files under `outputFolder`.
@@ -62,7 +52,7 @@ export const generateMarkdown = async (
         packageCanonicalReference: apiPackage.canonicalReference.toString(),
       });
       return writeFile(
-        path.resolve(outputFolder, `${kebabize(key)}.md`),
+        path.resolve(outputFolder, `${kebabCase(key)}.md`),
         markdownPage
       );
     })

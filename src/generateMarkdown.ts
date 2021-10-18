@@ -1,6 +1,7 @@
 import * as path from "path";
 import { ApiModel, ApiPackage } from "@microsoft/api-extractor-model";
 import { readdir, writeFile, ensureDir } from "fs-extra";
+import { kebabCase } from "lodash";
 
 import { ApiItems, getApiItems } from "./api/getApiItems";
 import { getMarkdownPage } from "./output/getMarkdownPage";
@@ -50,7 +51,10 @@ export const generateMarkdown = async (
         markdownEmitter,
         packageCanonicalReference: apiPackage.canonicalReference.toString(),
       });
-      return writeFile(path.resolve(outputFolder, `${key}.md`), markdownPage);
+      return writeFile(
+        path.resolve(outputFolder, `${kebabCase(key)}.md`),
+        markdownPage
+      );
     })
   );
 };

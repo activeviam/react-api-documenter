@@ -1,12 +1,13 @@
 import { ApiItems } from "./api/getApiItems";
 import { isPropsTypeWithMatchingComponent } from "./output/isPropsTypeWithMatchingComponent";
+import { kebabCase } from "lodash";
 
 const fileNames = [
   "classes",
   "errors",
   "functions",
   "components",
-  "context-providers",
+  "contextProviders",
   "hooks",
   "types",
   "variables",
@@ -17,7 +18,6 @@ export const getLinkPath = (
   items: ApiItems
 ): string | undefined => {
   const fileName = fileNames.find((kind) => items[kind][name] !== undefined);
-
   if (!fileName) {
     return undefined;
   }
@@ -30,5 +30,5 @@ export const getLinkPath = (
       return `./types#${name.toLowerCase()}`;
     }
   }
-  return `./${fileName}#${name.toLowerCase()}`;
+  return `./${kebabCase(fileName)}#${name.toLowerCase()}`;
 };

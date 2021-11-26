@@ -1,6 +1,6 @@
 {
   "name": "react-api-documenter",
-  "version": "0.0.31",
+  "version": "0.0.32",
   "description": "React API documentation generator",
   "bin": {
     "react-api-documenter": "./bin.js"

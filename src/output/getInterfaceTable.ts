@@ -26,11 +26,21 @@ const createTitleCell = (
   apiItem: ApiItem,
   { configuration }: { configuration: TSDocConfiguration }
 ): IndentedTableCell => {
+  const cellTitleNode = new DocPlainText({
+    configuration,
+    text: apiItem.displayName,
+  });
+
   return new IndentedTableCell(
     { configuration },
     [
       new DocParagraph({ configuration }, [
-        new DocPlainText({ configuration, text: apiItem.displayName }),
+        apiItem instanceof ApiDocumentedItem &&
+        apiItem.tsdocComment?.deprecatedBlock
+          ? new DocEmphasisSpan({ configuration, italic: true }, [
+              cellTitleNode,
+            ])
+          : cellTitleNode,
       ]),
     ],
     { isIndented: true, characterBreakingLine: "," }
@@ -81,6 +91,24 @@ const createDescriptionCell = (
   if (apiItem instanceof ApiDocumentedItem) {
     if (apiItem.tsdocComment !== undefined) {
       let firstNode: boolean = true;
+      if (apiItem.tsdocComment.deprecatedBlock) {
+        // Unwrap the paragraph's children as the paragraph itself
+        // can't be a child of a table cell.
+        const deprecatedBlockRootNode =
+          apiItem.tsdocComment.deprecatedBlock.content.nodes[0];
+        if (deprecatedBlockRootNode instanceof DocParagraph) {
+          section.appendNode(
+            new DocEmphasisSpan({ configuration, italic: true }, [
+              new DocPlainText({
+                configuration,
+                text: "Deprecated: ",
+              }),
+              ...deprecatedBlockRootNode.nodes,
+              new DocPlainText({ configuration, text: " " }),
+            ])
+          );
+        }
+      }
       for (const node of apiItem.tsdocComment.summarySection.nodes) {
         if (firstNode) {
           if (node.kind === "Paragraph") {
@@ -128,7 +156,7 @@ export const getInterfaceTable = (
     headerTitles: ["Method", "Description"],
   });
 
-  const members =  getInterfaceMembers(item, items);
+  const members = getInterfaceMembers(item, items);
 
   for (const apiMember of members) {
     switch (apiMember.kind) {

@@ -50,12 +50,15 @@ export const initConfiguration = (): TSDocConfiguration => {
   configuration.docNodeManager.registerAllowableChildren("EmphasisSpan", [
     "PlainText",
     "SoftBreak",
+    "CodeSpan",
   ]);
 
   configuration.docNodeManager.registerAllowableChildren("Section", [
     "Heading",
     "NoteBox",
     "Table",
+    "EmphasisSpan",
+    "PlainText",
   ]);
 
   configuration.docNodeManager.registerAllowableChildren("Paragraph", [

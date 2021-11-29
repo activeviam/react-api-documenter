@@ -1,5 +1,4 @@
 import { MarkdownEmitter } from "@microsoft/api-documenter/lib/markdown/MarkdownEmitter";
-import { DocNoteBox } from "@microsoft/api-documenter/lib/nodes/DocNoteBox";
 import { ApiDocumentedItem, ApiItem } from "@microsoft/api-extractor-model";
 import {
   DocComment,
@@ -31,17 +30,18 @@ export const getDescription = ({
 
     if (tsdocComment) {
       if (tsdocComment.deprecatedBlock) {
-        docSection.appendNode(
-          new DocNoteBox({ configuration }, [
-            new DocParagraph({ configuration }, [
-              new DocPlainText({
-                configuration,
-                text: "Warning: This is obsolete. ",
-              }),
-            ]),
-            ...tsdocComment.deprecatedBlock.content.nodes,
-          ])
-        );
+        docSection.appendNodes([
+          new DocParagraph({ configuration }, [
+            new DocPlainText({
+              configuration,
+              text: ":::caution Deprecated",
+            }),
+          ]),
+          ...tsdocComment.deprecatedBlock.content.nodes,
+          new DocParagraph({ configuration }, [
+            new DocPlainText({ configuration, text: ":::" }),
+          ]),
+        ]);
       }
 
       for (const node of tsdocComment.summarySection.nodes) {

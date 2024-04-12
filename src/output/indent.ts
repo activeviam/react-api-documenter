@@ -20,8 +20,7 @@ export const indent = (
   const end = input.slice(indexOfLastOpeningBracked + 1);
 
   const characterBreakingLine = options?.characterBreakingLine || ";";
-  const isEscaped =
-    options?.isEscaped === undefined ? true : options?.isEscaped;
+  const isEscaped = options?.isEscaped ?? true;
 
   const middleWithLineReturns = middle
     .replace(/\{/g, "{\n")
@@ -49,7 +48,7 @@ export const indent = (
     }
     indentedMiddle += char;
     if (char === `\n` && indentationLevel > 0) {
-      indentedMiddle += `${isEscaped ? "&nbsp;&nbsp" : "  "}`.repeat(
+      indentedMiddle += `${isEscaped ? "&nbsp;&nbsp;" : "  "}`.repeat(
         indentationLevel
       );
     }

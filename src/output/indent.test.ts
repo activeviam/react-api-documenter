@@ -1,7 +1,7 @@
 import { indent } from "./indent";
 
 describe("indent", () => {
-  it("indents `input`, escaping special characters", () => {
+  it("indents `input`, escaping line returns, tabs and whitespaces", () => {
     expect(
       indent(`
 {

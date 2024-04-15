@@ -79,7 +79,7 @@ export const getMarkdownForClass = ({
     });
 
     if (remarkSections) {
-      markdown += "\n";
+      markdown += "\n\n";
       markdown += remarkSections;
     }
 
@@ -89,7 +89,7 @@ export const getMarkdownForClass = ({
     });
 
     if (throwsSections) {
-      markdown += "\n";
+      markdown += "\n\n";
       markdown += throwsSections;
     }
 

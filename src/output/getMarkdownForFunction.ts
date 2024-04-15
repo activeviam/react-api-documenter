@@ -53,7 +53,7 @@ export const getMarkdownForFunction = (
   });
 
   if (remarkSections) {
-    markdown += "\n";
+    markdown += "\n\n";
     markdown += remarkSections;
   }
 

@@ -51,7 +51,7 @@ export const getMarkdownForType = ({
   });
 
   if (remarkSections) {
-    markdown += "\n";
+    markdown += "\n\n";
     markdown += remarkSections;
   }
 

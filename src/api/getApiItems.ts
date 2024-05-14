@@ -46,6 +46,8 @@ const accumulate = (acc: ApiItems, item: ApiItem, ignorePattern?: RegExp) => {
     } else if (isFunction(item)) {
       if (isInterpretedAsHook(item)) {
         acc.hooks[effectiveName] = item;
+      } else if (isInterpretedAsComponent(item)) {
+        acc.components[effectiveName] = item;
       } else {
         acc.functions[effectiveName] = item;
       }
